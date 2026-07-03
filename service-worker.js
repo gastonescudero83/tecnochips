@@ -16,7 +16,7 @@
 // Antes faltaban css/etapa5.css, todos los js/etapa5/*, el mapeo asistido y
 // el logo: instalada la PWA, esos archivos no existían offline y además el
 // caché viejo seguía sirviendo código desactualizado.
-const CACHE = 'tienda-pwa-v16'; // v16 = ofertas programadas con descuento real
+const CACHE = 'tienda-pwa-v17'; // v17 = catálogo publicado + contraseña admin fija
 
 const SHELL = [
   './',
@@ -101,6 +101,10 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(req.url);
   // Solo gestionamos peticiones del mismo origen (no CDNs externos como SheetJS).
   if (url.origin !== self.location.origin) return;
+
+  // Catálogo publicado (data/*.json): SIEMPRE red, sin cachear acá.
+  // La app lo pide con query única y valida versión; cachearlo duplicaría MB.
+  if (url.pathname.indexOf('/data/') !== -1) return;
 
   // Navegaciones → network-first, fallback al shell cacheado (offline).
   if (req.mode === 'navigate') {

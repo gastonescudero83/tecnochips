@@ -58,11 +58,17 @@
       console.info('[PWA] Abierto como archivo local: sin Service Worker. Para instalar como app, serví por HTTP.');
       return;
     }
-    window.addEventListener('load', () => {
+    // FIX: el arranque (Store.init) tarda más que la carga de la página, así que
+    // el evento 'load' YA PASÓ cuando llegamos acá y el listener nunca disparaba:
+    // el SW no se registraba nunca (sin PWA instalable, sin offline y con
+    // dispositivos servidos por SW viejos que mostraban código desactualizado).
+    const doRegister = () => {
       navigator.serviceWorker.register('service-worker.js')
         .then((reg) => console.info('[PWA] Service Worker registrado', reg.scope))
         .catch((err) => console.warn('[PWA] No se pudo registrar el SW', err));
-    });
+    };
+    if (document.readyState === 'complete') doRegister();
+    else window.addEventListener('load', doRegister);
   }
 
   /* ---- Instalación PWA (Android / Windows) ------------------------------ */

@@ -64,6 +64,9 @@
     async function load() {
       if (cache) return cache;
       const raw = await DB.kvGet(key);
+      // FIX anti-carrera: si mientras esperábamos la lectura otro flujo (la
+      // importación del catálogo publicado) ya llenó la caché, NO pisarla.
+      if (cache) return cache;
       cache = Array.isArray(raw) ? raw : [];
       return cache;
     }

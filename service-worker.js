@@ -16,7 +16,7 @@
 // Antes faltaban css/etapa5.css, todos los js/etapa5/*, el mapeo asistido y
 // el logo: instalada la PWA, esos archivos no existían offline y además el
 // caché viejo seguía sirviendo código desactualizado.
-const CACHE = 'tienda-pwa-v19'; // v19 = fix: ofertas programadas visibles desde el primer ingreso
+const CACHE = 'tienda-pwa-v20'; // v20 = fix: el SW no se registraba (evento 'load' perdido); promos estables al recargar
 
 const SHELL = [
   './',

@@ -59,6 +59,11 @@
       }
     }
 
+    // Etapa 5: precargar promociones/banners/marcas ANTES de renderizar.
+    // FIX: sin esto, en el primer ingreso las ofertas programadas (precios
+    // tachados) no aparecían hasta recargar varias veces.
+    if (App.E5 && App.E5.ready) await App.E5.ready();
+
     // Catálogo publicado: si el sitio trae un JSON más nuevo que lo importado
     // en este dispositivo, se carga automáticamente (visitantes ven datos reales).
     await syncPublishedData();

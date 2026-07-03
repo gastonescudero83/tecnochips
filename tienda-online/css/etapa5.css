@@ -1,0 +1,98 @@
+/* =============================================================================
+ * etapa5.css — Estilos aditivos de la ETAPA 5. No pisa estilos existentes:
+ * todo va namespaced bajo .e5-*. Usa las variables CSS de marca ya inyectadas
+ * por el tema (--color-primary, --color-accent, etc.) cuando existan.
+ * ========================================================================== */
+
+/* Badges de promoción (destacado, oferta, novedad...) */
+.e5-badge {
+  display: inline-block;
+  font-size: .72rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: .3em .6em;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--color-accent, #c0894a);
+  letter-spacing: .02em;
+}
+.e5-badge + .e5-badge { margin-left: .35em; }
+
+/* Barra de favoritos / comparador flotante */
+.e5-floating-bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 60;
+  background: var(--color-surface, #fff);
+  border-top: 1px solid rgba(0,0,0,.12);
+  box-shadow: 0 -4px 16px rgba(0,0,0,.08);
+  padding: .6rem 1rem;
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+  justify-content: space-between;
+  transform: translateY(110%);
+  transition: transform .25s ease;
+}
+.e5-floating-bar.is-open { transform: translateY(0); }
+
+/* Botón corazón de favorito */
+.e5-fav-btn {
+  background: none; border: none; cursor: pointer;
+  font-size: 1.25rem; line-height: 1; padding: .2rem;
+  color: var(--color-muted, #8a8073);
+}
+.e5-fav-btn.is-active { color: #e0245e; }
+
+/* Botones de compartir */
+.e5-share { display: inline-flex; gap: .4rem; flex-wrap: wrap; }
+.e5-share button {
+  border: 1px solid rgba(0,0,0,.15);
+  background: var(--color-surface, #fff);
+  border-radius: 8px;
+  padding: .35rem .6rem;
+  cursor: pointer;
+  font-size: .85rem;
+}
+.e5-share button:hover { border-color: var(--color-accent, #c0894a); }
+
+/* Tabla comparador */
+.e5-compare-table { width: 100%; border-collapse: collapse; }
+.e5-compare-table th, .e5-compare-table td {
+  border: 1px solid rgba(0,0,0,.1);
+  padding: .5rem .6rem; text-align: left; vertical-align: top; font-size: .9rem;
+}
+.e5-compare-table th { background: rgba(0,0,0,.03); }
+
+/* Sugerencias de búsqueda */
+.e5-suggest {
+  position: absolute; z-index: 50;
+  background: var(--color-surface, #fff);
+  border: 1px solid rgba(0,0,0,.15);
+  border-radius: 0 0 10px 10px;
+  max-height: 320px; overflow-y: auto;
+  width: 100%;
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+}
+.e5-suggest__item { padding: .5rem .75rem; cursor: pointer; display: flex; gap: .5rem; align-items: center; }
+.e5-suggest__item:hover, .e5-suggest__item.is-active { background: rgba(0,0,0,.05); }
+.e5-suggest__kind { font-size: .7rem; color: var(--color-muted, #8a8073); margin-left: auto; }
+
+/* Carrusel de banners */
+.e5-banner { position: relative; overflow: hidden; border-radius: 14px; }
+.e5-banner__slide { position: relative; min-height: 160px; background-size: cover; background-position: center; }
+.e5-banner__caption { position: absolute; left: 0; bottom: 0; right: 0; padding: 1rem 1.2rem; background: linear-gradient(transparent, rgba(0,0,0,.6)); color: #fff; }
+
+/* Grilla de marcas */
+.e5-brands-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px,1fr)); gap: 1rem; }
+.e5-brand-card { border: 1px solid rgba(0,0,0,.1); border-radius: 12px; padding: 1rem; text-align: center; cursor: pointer; background: var(--color-surface,#fff); }
+.e5-brand-card img { max-height: 56px; max-width: 100%; object-fit: contain; }
+
+/* Tablas de auditoría / admin etapa 5 */
+.e5-admin-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.e5-admin-table th, .e5-admin-table td { padding: .45rem .6rem; border-bottom: 1px solid rgba(0,0,0,.08); text-align: left; }
+.e5-tag { display:inline-block; padding:.15em .5em; border-radius:6px; font-size:.72rem; background:rgba(0,0,0,.06); }
+
+/* Lazy loading: imagen aún no cargada */
+img.e5-lazy { filter: blur(8px); transition: filter .3s ease; background: rgba(0,0,0,.05); }
+img.e5-lazy.is-loaded { filter: none; }

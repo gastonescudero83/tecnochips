@@ -1,0 +1,25 @@
+{
+  "name": "TECNOCHIP'S — Electro & Hogar",
+  "short_name": "TECNOCHIP'S",
+  "description": "Celulares, Smart TV, consolas y tecnología. Catálogo con pedidos por WhatsApp. Funciona offline.",
+  "start_url": "./",
+  "scope": "./",
+  "id": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#efeae0",
+  "theme_color": "#2b2722",
+  "lang": "es",
+  "dir": "ltr",
+  "categories": ["shopping", "business"],
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icons/icon-maskable.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Ofertas", "url": "./#/ofertas" },
+    { "name": "Novedades", "url": "./#/novedades" },
+    { "name": "Carrito", "url": "./#/carrito" }
+  ]
+}

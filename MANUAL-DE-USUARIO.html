@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Manual de Usuario — TECNOCHIP'S</title>
+<style>
+  :root{
+    --c1:#2b2722; --c2:#16120e; --acc:#c0894a; --bg:#efeae0; --surf:#fff;
+    --muted:#8a8073; --ok:#2e9e5b; --warn:#c0894a; --danger:#c0392b; --info:#2563eb;
+    --line:#e3ddd0;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--c1);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65; font-size:16px;
+  }
+  .wrap{max-width:900px; margin:0 auto; padding:0 22px 80px}
+
+  /* Portada */
+  .cover{
+    background:linear-gradient(140deg,var(--c1),var(--c2)); color:#fff;
+    border-radius:0 0 26px 26px; padding:64px 40px 52px; text-align:center;
+    margin-bottom:34px;
+  }
+  .cover .kicker{letter-spacing:.22em; text-transform:uppercase; font-size:.78rem; color:var(--acc); font-weight:700}
+  .cover h1{font-size:2.5rem; margin:.3em 0 .15em; line-height:1.15}
+  .cover .sub{font-size:1.12rem; opacity:.92; margin:0 auto; max-width:560px}
+  .cover .tag{display:inline-block; margin-top:22px; background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:7px 16px; font-size:.85rem}
+
+  h2{font-size:1.6rem; margin:2.2em 0 .5em; padding-top:.4em; border-top:3px solid var(--acc); color:var(--c2)}
+  h2 .num{color:var(--acc); font-weight:800; margin-right:.35em}
+  h3{font-size:1.18rem; margin:1.5em 0 .4em; color:var(--c2)}
+  h4{font-size:1rem; margin:1.2em 0 .3em; color:var(--c1)}
+  p{margin:.55em 0}
+  ul,ol{margin:.5em 0 .9em; padding-left:1.4em}
+  li{margin:.28em 0}
+  a{color:var(--info); text-decoration:none}
+  code{background:#f3eee2; border:1px solid var(--line); border-radius:5px; padding:1px 6px; font-size:.9em; font-family:ui-monospace,Menlo,Consolas,monospace}
+  strong{color:var(--c2)}
+
+  /* Índice */
+  .toc{background:var(--surf); border:1px solid var(--line); border-radius:16px; padding:26px 30px; margin-bottom:10px}
+  .toc h2{border:0; margin:0 0 .6em; padding:0; font-size:1.35rem}
+  .toc ol{list-style:none; padding:0; margin:0; counter-reset:toc}
+  .toc ol li{counter-increment:toc; margin:.2em 0; display:flex; align-items:baseline; gap:10px}
+  .toc ol li::before{content:counter(toc); color:var(--acc); font-weight:800; min-width:1.7em; text-align:right}
+  .toc a{color:var(--c1)}
+  .toc a:hover{color:var(--info)}
+
+  /* Cajas de callout */
+  .box{border-radius:12px; padding:14px 18px 14px 16px; margin:1.1em 0; border-left:5px solid; background:var(--surf)}
+  .box p:first-child{margin-top:0}
+  .box p:last-child{margin-bottom:0}
+  .box .lbl{font-weight:800; font-size:.82rem; letter-spacing:.04em; text-transform:uppercase; display:block; margin-bottom:.25em}
+  .tip{border-color:var(--ok); background:#f2faf5}     .tip .lbl{color:var(--ok)}
+  .warn{border-color:var(--warn); background:#fbf6ee}  .warn .lbl{color:#a96f2e}
+  .danger{border-color:var(--danger); background:#fcf1ef} .danger .lbl{color:var(--danger)}
+  .ex{border-color:var(--info); background:#f1f5fd}    .ex .lbl{color:var(--info)}
+
+  /* Pasos */
+  .steps{counter-reset:step; list-style:none; padding:0}
+  .steps>li{counter-increment:step; position:relative; padding-left:44px; margin:.7em 0}
+  .steps>li::before{content:counter(step); position:absolute; left:0; top:-2px;
+    width:30px; height:30px; background:var(--c1); color:#fff; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.9rem}
+
+  table{border-collapse:collapse; width:100%; margin:1em 0; background:var(--surf); font-size:.95rem}
+  th,td{border:1px solid var(--line); padding:9px 12px; text-align:left; vertical-align:top}
+  th{background:#f3eee2; color:var(--c2)}
+
+  .chip{display:inline-block; background:#f3eee2; border:1px solid var(--line); border-radius:6px; padding:1px 8px; font-size:.85em; margin:1px 2px}
+  hr{border:0; border-top:1px solid var(--line); margin:2em 0}
+  .toplink{display:block; text-align:right; font-size:.8rem; margin-top:.4em}
+  footer{text-align:center; color:var(--muted); font-size:.85rem; margin-top:50px}
+
+  @media print{
+    body{background:#fff; font-size:11.5pt}
+    .wrap{max-width:100%; padding:0}
+    .cover{border-radius:0; margin:0 0 18px; -webkit-print-color-adjust:exact; print-color-adjust:exact}
+    .box,th,.cover{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+    h2{break-after:avoid; page-break-after:avoid}
+    h2,h3,h4{break-inside:avoid}
+    .box,table,.steps>li{break-inside:avoid}
+    .toplink,.noprint{display:none}
+    a{color:var(--c1)}
+    .toc{break-after:page}
+  }
+</style>
+</head>
+<body>
+<div class="cover">
+  <div class="kicker">Manual de Usuario</div>
+  <h1>TECNOCHIP'S — Electro &amp; Hogar</h1>
+  <p class="sub">Cómo usar tu tienda online: catálogo, pedidos por WhatsApp y panel de administración. Explicado paso a paso, sin tecnicismos.</p>
+  <span class="tag">Funciona sin conexión · Se instala como app · No requiere conocimientos técnicos</span>
+</div>
+
+<div class="wrap">
+
+<div class="box tip noprint">
+  <span class="lbl">Cómo guardar este manual en PDF</span>
+  <p>Abrí este archivo en tu navegador (Chrome o Edge), presioná <strong>Ctrl + P</strong> (o <strong>Cmd + P</strong> en Mac) y elegí <strong>“Guardar como PDF”</strong>. También podés imprimirlo en papel desde la misma ventana.</p>
+</div>
+
+<nav class="toc">
+  <h2>Índice</h2>
+  <ol>
+    <li><a href="#c1">Qué es esta aplicación</a></li>
+    <li><a href="#c2">Instalación y primer inicio</a></li>
+    <li><a href="#c3">Pantalla principal</a></li>
+    <li><a href="#c4">Navegación del catálogo</a></li>
+    <li><a href="#c5">Búsqueda de productos</a></li>
+    <li><a href="#c6">Categorías y filtros</a></li>
+    <li><a href="#c7">Ver un producto en detalle</a></li>
+    <li><a href="#c8">Favoritos, comparar y compartir</a></li>
+    <li><a href="#c9">Carrito de compras</a></li>
+    <li><a href="#c10">Enviar el pedido por WhatsApp</a></li>
+    <li><a href="#c11">Entrar al panel de administración</a></li>
+    <li><a href="#c12">Panel: resumen general</a></li>
+    <li><a href="#c13">Gestión de productos</a></li>
+    <li><a href="#c14">Categorías y subcategorías</a></li>
+    <li><a href="#c15">Comentarios y opiniones</a></li>
+    <li><a href="#c16">Apariencia y personalización</a></li>
+    <li><a href="#c17">Importar catálogos (PDF, Excel, CSV)</a></li>
+    <li><a href="#c18">Mapeo asistido y extracción de imágenes</a></li>
+    <li><a href="#c19">Importar / Exportar y formato de planilla</a></li>
+    <li><a href="#c20">Copias de seguridad (Backup) y restauración</a></li>
+    <li><a href="#c21">Herramientas avanzadas (promos, marcas, masivo, SEO…)</a></li>
+    <li><a href="#c22">Seguridad y contraseña</a></li>
+    <li><a href="#c23">Funcionamiento sin conexión (PWA)</a></li>
+    <li><a href="#c24">Actualizar la aplicación</a></li>
+    <li><a href="#c25">Preguntas frecuentes (FAQ)</a></li>
+    <li><a href="#c26">Resolución de problemas comunes</a></li>
+  </ol>
+</nav>
+
+<!-- ========================= 1 ========================= -->
+<h2 id="c1"><span class="num">1.</span>Qué es esta aplicación</h2>
+<p>TECNOCHIP'S es una <strong>tienda online</strong> que muestra tus productos en un catálogo moderno y permite que tus clientes te envíen el pedido directamente por <strong>WhatsApp</strong>. No hay pagos online ni complicaciones: el cliente arma su carrito y, con un toque, te llega el mensaje con todo el detalle.</p>
+<p>Hay <strong>dos formas de usarla</strong>, según quién seas:</p>
+<ul>
+  <li><strong>Cliente / visitante:</strong> navega el catálogo, busca productos y manda su pedido. No necesita registrarse ni instalar nada.</li>
+  <li><strong>Administrador (vos):</strong> entrás a un <strong>panel protegido por contraseña</strong> donde cargás productos, precios, fotos, categorías y personalizás toda la tienda, <em>sin tocar código</em>.</li>
+</ul>
+<div class="box tip">
+  <span class="lbl">Lo más importante</span>
+  <p>Todos los datos se guardan <strong>en el propio dispositivo</strong> (en el navegador), y la app <strong>funciona sin Internet</strong>. Esto la hace muy rápida, pero significa que <strong>las copias de seguridad son tu responsabilidad</strong> (ver capítulo 20).</p>
+</div>
+
+<!-- ========================= 2 ========================= -->
+<h2 id="c2"><span class="num">2.</span>Instalación y primer inicio</h2>
+<p>No hace falta instalar nada para empezar. Tenés dos opciones según lo que necesites.</p>
+
+<h3>Opción A — Abrir directo (la forma más rápida)</h3>
+<ol class="steps">
+  <li>Buscá el archivo <code>index.html</code> en la carpeta de la tienda.</li>
+  <li>Hacé doble clic. Se abre en tu navegador y ya podés usar todo: catálogo, carrito y panel.</li>
+</ol>
+<div class="box warn">
+  <span class="lbl">Limitación de esta opción</span>
+  <p>Abriendo el archivo directamente <strong>no</strong> aparece el botón “Instalar app” ni el modo sin conexión completo. Para eso usá la Opción B.</p>
+</div>
+
+<h3>Opción B — Como app instalable (recomendada para uso diario)</h3>
+<p>Para tener el ícono en el celular o la PC y que funcione 100% offline, la tienda debe abrirse desde una dirección de Internet (un “hosting”). Si ya te pasaron un enlace (por ejemplo <code>https://tutienda.netlify.app</code>), seguí estos pasos:</p>
+<ol class="steps">
+  <li>Abrí el enlace en <strong>Chrome</strong> (Android/PC) o <strong>Safari</strong> (iPhone).</li>
+  <li>Esperá a que cargue. Aparecerá el botón <strong>“⬇️ Instalar app”</strong> (o, en el menú del navegador, la opción <strong>“Agregar a pantalla de inicio”</strong>).</li>
+  <li>Confirmá. La tienda queda como una app más, con su ícono.</li>
+</ol>
+
+<h3>Primer inicio</h3>
+<p>La primera vez, la tienda viene con un <strong>catálogo de demostración</strong> ya cargado para que veas cómo se ve todo funcionando. Podés reemplazarlo por tus productos reales (capítulo 13) o borrarlo y empezar de cero (capítulo 20).</p>
+<div class="box ex">
+  <span class="lbl">Ejemplo</span>
+  <p>Querés mostrarle la tienda a un cliente desde tu celular sin Internet en el local: instalá la app (Opción B) una vez con conexión; después abre y funciona aunque te quedes sin señal.</p>
+</div>
+
+<!-- ========================= 3 ========================= -->
+<h2 id="c3"><span class="num">3.</span>Pantalla principal</h2>
+<p>Es lo primero que ve el cliente. De arriba hacia abajo encontrás:</p>
+<table>
+  <tr><th>Elemento</th><th>Para qué sirve</th></tr>
+  <tr><td><strong>Encabezado</strong> (logo, buscador, 🛒 carrito)</td><td>Siempre visible. El logo vuelve al inicio; el buscador encuentra productos; el carrito muestra cuántos artículos llevás.</td></tr>
+  <tr><td><strong>Banner principal</strong></td><td>Imagen y mensaje destacado con un botón (por ejemplo “Ver ofertas”).</td></tr>
+  <tr><td><strong>Carrusel</strong></td><td>Imágenes promocionales que rotan solas (si las cargaste).</td></tr>
+  <tr><td><strong>Categorías</strong></td><td>Accesos rápidos a cada rubro (Celulares, Smart TV, etc.).</td></tr>
+  <tr><td><strong>Filas de productos</strong></td><td>“🔥 Ofertas”, “🆕 Novedades” y “⭐ Destacados”.</td></tr>
+  <tr><td><strong>Barra inferior</strong> (en celular)</td><td>Inicio · Categorías · Ofertas · Carrito, siempre a mano.</td></tr>
+  <tr><td><strong>Pie de página</strong></td><td>Datos de la tienda y el acceso <strong>⚙️ Administrar tienda</strong>.</td></tr>
+</table>
+<a class="toplink" href="#c1">↑ Volver al índice</a>
+
+<!-- ========================= 4 ========================= -->
+<h2 id="c4"><span class="num">4.</span>Navegación del catálogo</h2>
+<p>Moverte por la tienda es como en cualquier app de compras.</p>
+<ul>
+  <li><strong>Tocar una categoría</strong> (en la barra superior, en los accesos rápidos o en el menú ☰) abre todos los productos de ese rubro.</li>
+  <li><strong>Menú lateral (☰):</strong> en el celular, tocá las tres rayitas arriba a la izquierda para ver todas las categorías y subcategorías ordenadas.</li>
+  <li><strong>Scroll infinito:</strong> a medida que bajás, se cargan más productos automáticamente. No hay que pasar páginas.</li>
+</ul>
+<div class="box tip">
+  <span class="lbl">Consejo</span>
+  <p>Las secciones <span class="chip">🔥 Ofertas</span> <span class="chip">🆕 Novedades</span> <span class="chip">⭐ Destacados</span> se arman solas según cómo marques cada producto en el panel. No hay que ordenarlas a mano.</p>
+</div>
+
+<!-- ========================= 5 ========================= -->
+<h2 id="c5"><span class="num">5.</span>Búsqueda de productos</h2>
+<p>El buscador (la lupa 🔎 arriba) encuentra productos por <strong>nombre, marca, código, categoría o palabras de la descripción</strong>.</p>
+<ol class="steps">
+  <li>Tocá la barra de búsqueda y empezá a escribir.</li>
+  <li>Aparecen <strong>sugerencias al instante</strong> con foto y precio mientras tipeás.</li>
+  <li>Tocá una sugerencia para ir directo al producto, o presioná Enter para ver todos los resultados.</li>
+</ol>
+<div class="box ex">
+  <span class="lbl">Ejemplo</span>
+  <p>Escribís <em>“sams”</em> y ya te muestra los Samsung; escribís un código como <em>“A001”</em> y te lleva al producto exacto.</p>
+</div>
+
+<!-- ========================= 6 ========================= -->
+<h2 id="c6"><span class="num">6.</span>Categorías y filtros</h2>
+<p>Dentro de una categoría o de los resultados de búsqueda, tenés una barra de herramientas para afinar lo que ves.</p>
+<h3>Ordenar</h3>
+<p>El menú <strong>Ordenar</strong> permite: Relevancia, Más nuevos, Menor precio, Mayor precio, Nombre A-Z y Mayor descuento.</p>
+<h3>Filtrar</h3>
+<p>El botón <strong>Filtros</strong> abre un panel lateral donde podés combinar:</p>
+<ul>
+  <li><strong>Precio:</strong> mínimo y máximo.</li>
+  <li><strong>Etiquetas:</strong> por ejemplo “Sellado”, “Gaming”, “Garantía 30 días”.</li>
+  <li><strong>Solo ofertas</strong> y <strong>Solo con stock</strong>.</li>
+</ul>
+<p>Tocá <strong>Aplicar</strong> para ver el resultado o <strong>Limpiar</strong> para quitar todos los filtros.</p>
+<h3>Subcategorías</h3>
+<p>Si la categoría tiene subcategorías (por ejemplo Celulares → Samsung, Xiaomi…), aparecen como botones arriba para acotar todavía más.</p>
+
+<!-- ========================= 7 ========================= -->
+<h2 id="c7"><span class="num">7.</span>Ver un producto en detalle</h2>
+<p>Al tocar un producto se abre su ficha completa, con todo lo que el cliente necesita para decidir:</p>
+<ul>
+  <li><strong>Galería de fotos:</strong> tocá las miniaturas para cambiar la imagen grande.</li>
+  <li><strong>Precio</strong> y, si está en oferta, el precio anterior tachado y cuánto se ahorra.</li>
+  <li><strong>Stock:</strong> “En stock”, “¡Últimas X!” o “Sin stock”.</li>
+  <li><strong>Cantidad + “Agregar al carrito”.</strong></li>
+  <li><strong>“Consultar por WhatsApp”:</strong> escribe directamente por ese producto puntual.</li>
+  <li><strong>Descripción</strong>, <strong>opiniones con estrellas</strong> y <strong>productos relacionados</strong>.</li>
+</ul>
+<a class="toplink" href="#c1">↑ Volver al índice</a>
+
+<!-- ========================= 8 ========================= -->
+<h2 id="c8"><span class="num">8.</span>Favoritos, comparar y compartir</h2>
+<p>En las tarjetas y en la ficha del producto el cliente tiene herramientas extra:</p>
+<table>
+  <tr><th>Función</th><th>Qué hace</th></tr>
+  <tr><td><strong>❤️ Favoritos</strong></td><td>Guarda productos que le interesan para encontrarlos rápido después (quedan en su dispositivo).</td></tr>
+  <tr><td><strong>⚖️ Comparar</strong></td><td>Selecciona varios productos y los pone lado a lado para ver diferencias de precio y características.</td></tr>
+  <tr><td><strong>🔗 Compartir</strong></td><td>Envía el producto por WhatsApp, redes o copia el enlace.</td></tr>
+</table>
+<div class="box tip">
+  <span class="lbl">Buena práctica</span>
+  <p>Estas funciones son del lado del cliente; cada visitante tiene sus propios favoritos. No requieren que administres nada.</p>
+</div>
+
+<!-- ========================= 9 ========================= -->
+<h2 id="c9"><span class="num">9.</span>Carrito de compras</h2>
+<p>El carrito (🛒 arriba a la derecha) junta todo lo que el cliente quiere pedir.</p>
+<ol class="steps">
+  <li>Agregá productos con el botón <strong>“Agregar”</strong> desde el catálogo o la ficha.</li>
+  <li>Abrí el carrito tocando el ícono 🛒.</li>
+  <li>Ajustá las <strong>cantidades</strong> con los botones + / − , o quitá un artículo con el tacho 🗑️.</li>
+  <li>Mirá el <strong>subtotal y total</strong> que se actualizan solos.</li>
+</ol>
+<div class="box warn">
+  <span class="lbl">A tener en cuenta</span>
+  <p>El carrito vive en el dispositivo del cliente. Si cierra la pestaña puede conservarse, pero no es una reserva de stock: el pedido recién te llega cuando lo envía por WhatsApp.</p>
+</div>
+
+<!-- ========================= 10 ========================= -->
+<h2 id="c10"><span class="num">10.</span>Enviar el pedido por WhatsApp</h2>
+<p>Es el paso final de la compra. Desde el carrito:</p>
+<ol class="steps">
+  <li>Completá los datos: <strong>Nombre</strong> (obligatorio), <strong>Dirección</strong> y <strong>Observaciones</strong> (opcionales).</li>
+  <li>Opcional: abrí <strong>“Ver mensaje que se enviará”</strong> para revisar cómo queda.</li>
+  <li>Tocá <strong>“Enviar pedido por WhatsApp”</strong>. Se abre WhatsApp con el mensaje ya armado (productos, cantidades y total).</li>
+  <li>El cliente solo presiona enviar. El pedido te llega a vos.</li>
+</ol>
+<div class="box ex">
+  <span class="lbl">Ejemplo de mensaje que recibís</span>
+  <p>“Hola 👋. Quiero realizar el siguiente pedido: 2× Smart TV 50&quot; … <strong>Total: $850.000</strong>. Nombre: Juan. Dirección: …”.</p>
+</div>
+<div class="box tip">
+  <span class="lbl">Consejo</span>
+  <p>Asegurate de cargar bien tu número de WhatsApp en el panel (capítulo 16). Si no hay número configurado, la app avisa al cliente para que elija el contacto manualmente.</p>
+</div>
+
+<!-- ========================= 11 ========================= -->
+<h2 id="c11"><span class="num">11.</span>Entrar al panel de administración</h2>
+<p>El panel es la parte privada donde administrás todo. Solo vos deberías entrar.</p>
+<ol class="steps">
+  <li>Bajá al pie de la tienda y tocá <strong>“⚙️ Administrar tienda”</strong> (o agregá <code>#/admin</code> al final de la dirección).</li>
+  <li><strong>La primera vez</strong> te pide <strong>crear una contraseña</strong> (mínimo 4 caracteres). Anotala: no se puede recuperar si la olvidás.</li>
+  <li>Las próximas veces, ingresá esa contraseña para entrar.</li>
+</ol>
+<div class="box danger">
+  <span class="lbl">Importante</span>
+  <p>Si olvidás la contraseña <strong>no hay forma de recuperarla</strong> (no hay servidor). La única salida es borrar los datos del sitio o restaurar un backup. Por eso: <strong>guardá la contraseña</strong> y hacé <strong>backups</strong> seguido.</p>
+</div>
+<p>Dentro del panel, el menú lateral te lleva a cada sección. Para volver a la tienda tocá <strong>“👁️ Ver tienda”</strong>; para cerrar sesión, <strong>“🚪 Salir”</strong> (la sesión también se cierra sola al recargar o cerrar la pestaña).</p>
+<a class="toplink" href="#c1">↑ Volver al índice</a>
+
+<!-- ========================= 12 ========================= -->
+<h2 id="c12"><span class="num">12.</span>Panel: resumen general</h2>
+<p>La sección <strong>📊 Panel</strong> es tu tablero de control. Muestra de un vistazo:</p>
+<ul>
+  <li><strong>Números clave:</strong> cantidad de productos, categorías, productos en oferta, sin stock, destacados y comentarios.</li>
+  <li><strong>Acciones rápidas:</strong> crear un producto, personalizar la tienda o ir a backups.</li>
+  <li><strong>Almacenamiento local:</strong> cuánto espacio estás usando en el dispositivo.</li>
+</ul>
+<div class="box tip">
+  <span class="lbl">Consejo</span>
+  <p>Si ves un número alto en <strong>“Sin stock”</strong>, conviene revisar esos productos: podés ocultarlos o reponer stock para que no muestren “Sin stock” al cliente.</p>
+</div>
+
+<!-- ========================= 13 ========================= -->
+<h2 id="c13"><span class="num">13.</span>Gestión de productos</h2>
+<p>En <strong>📦 Productos</strong> está toda tu mercadería en una tabla. Podés buscar arriba por nombre, código o marca.</p>
+
+<h3>Crear o editar un producto</h3>
+<ol class="steps">
+  <li>Tocá <strong>“➕ Nuevo”</strong> (o <strong>“Editar”</strong> en una fila existente).</li>
+  <li>Completá los datos. Solo el <strong>Nombre</strong> es obligatorio:</li>
+</ol>
+<table>
+  <tr><th>Campo</th><th>Para qué sirve</th></tr>
+  <tr><td>Nombre, Código, Marca, Modelo</td><td>Identifican el producto. El <strong>código</strong> y el <strong>modelo</strong> ayudan a que la importación de catálogos reconozca el producto y actualice su precio.</td></tr>
+  <tr><td>Categoría / Subcategoría</td><td>Dónde aparece en la tienda.</td></tr>
+  <tr><td>Descripción</td><td>Texto que ve el cliente en la ficha.</td></tr>
+  <tr><td>Precio</td><td>Precio de lista (el normal).</td></tr>
+  <tr><td>Precio anterior</td><td>Se muestra <strong>tachado</strong> para resaltar una rebaja.</td></tr>
+  <tr><td>Precio oferta</td><td>Si lo completás, <strong>ese</strong> pasa a ser el precio final y el producto aparece en Ofertas.</td></tr>
+  <tr><td>Stock</td><td>Unidades disponibles. En 0 muestra “Sin stock”.</td></tr>
+  <tr><td>🔒 Precio manual</td><td>Si lo activás, las importaciones de catálogo <strong>no tocarán</strong> ese precio.</td></tr>
+  <tr><td>Etiquetas</td><td>Sellos como “Sellado”, “Oferta”, “Gaming”.</td></tr>
+  <tr><td>⭐ Destacado · 🆕 Nuevo · 👁️ Visible</td><td>Lo muestran en Destacados/Novedades o lo ocultan sin borrarlo.</td></tr>
+  <tr><td>Imágenes</td><td>Subí varias; la primera es la principal. Se <strong>comprimen solas</strong> para que la tienda siga rápida.</td></tr>
+</table>
+<ol class="steps" start="3" style="counter-reset:step 2">
+  <li>Tocá <strong>“Crear producto”</strong> o <strong>“Guardar cambios”</strong>.</li>
+</ol>
+<div class="box tip">
+  <span class="lbl">Trucos con las fotos</span>
+  <p>Podés subir <strong>varias imágenes a la vez</strong>. Con la estrella ★ hacés principal a otra foto, y con la ✕ la quitás. No te preocupes por el peso: se optimizan automáticamente.</p>
+</div>
+
+<h4>Eliminar un producto</h4>
+<p>Usá el botón 🗑 de la fila. Te pide confirmación porque <strong>no se puede deshacer</strong>. Si solo querés sacarlo de la vista temporalmente, mejor desmarcá <strong>“Visible”</strong> en vez de borrarlo.</p>
+<a class="toplink" href="#c1">↑ Volver al índice</a>
+

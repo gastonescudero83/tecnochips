@@ -36,6 +36,19 @@
     }),
   });
 
+  /* ---- SEGURIDAD: contraseña de administrador FIJA ------------------------ */
+  // Hash SHA-256 de 'tienda::<contraseña>'. Con esto, el sitio publicado NUNCA
+  // ofrece "crear contraseña": solo se puede entrar con la clave del dueño.
+  // Para cambiar la clave hay que reemplazar este hash (pedirlo a Claude).
+  App.ADMIN_HASH = '688747a3f90dcb4297fcbf9465cab35a1d18b29b67ad12229dfca4e3cf4f3540';
+
+  /* ---- PUBLICACIÓN: catálogo que viaja con la página ---------------------- */
+  // Archivo JSON (backup exportado desde el panel) publicado junto al sitio.
+  // Al abrir la tienda, si este archivo es más nuevo que lo ya importado en el
+  // dispositivo, se carga automáticamente (así los visitantes ven el catálogo
+  // real y actualizado, no el de demostración).
+  App.PUBLISHED_DATA_URL = 'data/tienda-publicada.json';
+
   /* ---- Configuración por defecto de la tienda (editable en el panel) ------ */
   App.DEFAULT_SETTINGS = Object.freeze({
     storeName: "TECNOCHIP'S",

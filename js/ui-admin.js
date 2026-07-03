@@ -845,6 +845,13 @@
    *  SEGURIDAD
    * ====================================================================== */
   function sectionSecurity(c) {
+    // Con contraseña fija en config.js no se puede cambiar desde el panel.
+    if (App.ADMIN_HASH) {
+      c.appendChild(card('🔐 Contraseña', [
+        U.el('p', { class: 'a-muted', text: 'La contraseña de administrador está fijada en el código (js/config.js). Nadie puede crear ni cambiar la clave desde el sitio publicado. Para cambiarla, generá un hash nuevo y reemplazalo en config.js.' }),
+      ]));
+      return;
+    }
     const cur = inp({ type: 'password', autocomplete: 'current-password' });
     const n1 = inp({ type: 'password', autocomplete: 'new-password' });
     const n2 = inp({ type: 'password', autocomplete: 'new-password' });

@@ -59,6 +59,10 @@
       }
     }
 
+    // Catálogo publicado: si el sitio trae un JSON más nuevo que lo importado
+    // en este dispositivo, se carga automáticamente (visitantes ven datos reales).
+    await syncPublishedData();
+
     // Primer arranque: sembrar datos de demostración
     if (!state.categories.length && !state.products.length) {
       await seed();
@@ -297,18 +301,51 @@
     emit('comments', { type: 'delete', id });
   }
 
-  /* ---- SEGURIDAD: clave del admin ---------------------------------------- */
+  /* ---- SEGURIDAD: clave del admin -----------------------------------------
+   * Si App.ADMIN_HASH está definido en config.js, la clave es FIJA: nunca se
+   * ofrece "crear contraseña" (ni en el sitio publicado ni local) y no se
+   * puede cambiar desde el panel. Sin ADMIN_HASH, funciona como antes (KV). */
   async function hasPassword() {
+    if (App.ADMIN_HASH) return true;
     return !!(await DB.kvGet(KV_KEYS.PASSWORD));
   }
   async function setPassword(plain) {
+    if (App.ADMIN_HASH) throw new Error('La contraseña es fija (definida en config.js).');
     const hash = await U.hash(plain);
     await DB.kvSet(KV_KEYS.PASSWORD, hash);
   }
   async function checkPassword(plain) {
+    if (App.ADMIN_HASH) return (await U.hash(plain)) === App.ADMIN_HASH;
     const stored = await DB.kvGet(KV_KEYS.PASSWORD);
     if (!stored) return false;
     return (await U.hash(plain)) === stored;
+  }
+
+  /* ---- PUBLICACIÓN: importar catálogo publicado ---------------------------
+   * Descarga App.PUBLISHED_DATA_URL (backup JSON exportado desde el panel).
+   * Si su meta.exportedAt es más nuevo que lo último importado en este
+   * dispositivo, lo importa completo (reemplaza). Offline o sin archivo: no
+   * hace nada (la tienda sigue con sus datos locales o el seed). */
+  const KV_PUBLISHED = 'published_version';
+
+  async function syncPublishedData() {
+    if (!App.PUBLISHED_DATA_URL) return;
+    if (location.protocol === 'file:') return; // sin hosting no hay archivo publicado
+    try {
+      // Query única: evita el caché del Service Worker y del navegador.
+      const res = await fetch(App.PUBLISHED_DATA_URL + '?v=' + Date.now(), { cache: 'no-store' });
+      if (!res.ok) return;
+      const data = await res.json();
+      const remote = data && data.meta && Number(data.meta.exportedAt);
+      if (!remote) return;
+      const local = Number(await DB.kvGet(KV_PUBLISHED)) || 0;
+      if (remote <= local) return; // ya está al día
+      await importAll(data, { merge: false });
+      await DB.kvSet(KV_PUBLISHED, remote);
+      console.info('[Store] Catálogo publicado importado:', new Date(remote).toLocaleString());
+    } catch (e) {
+      console.warn('[Store] No se pudo leer el catálogo publicado (¿offline?)', e);
+    }
   }
 
   /* ---- BACKUP / RESTORE (JSON completo) ----------------------------------

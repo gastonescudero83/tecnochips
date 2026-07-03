@@ -327,24 +327,47 @@
    * dispositivo, lo importa completo (reemplaza). Offline o sin archivo: no
    * hace nada (la tienda sigue con sus datos locales o el seed). */
   const KV_PUBLISHED = 'published_version';
+  const KV_ETAG = 'published_etag';
+
+  /** fetch con límite de tiempo: en móviles con mala señal, una descarga
+   *  colgada no debe dejar la tienda cargando para siempre. */
+  function fetchTimeout(url, opts, ms) {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), ms);
+    return fetch(url, Object.assign({}, opts, { signal: ctrl.signal }))
+      .finally(() => clearTimeout(t));
+  }
 
   async function syncPublishedData() {
     if (!App.PUBLISHED_DATA_URL) return;
     if (location.protocol === 'file:') return; // sin hosting no hay archivo publicado
     try {
-      // Query única: evita el caché del Service Worker y del navegador.
-      const res = await fetch(App.PUBLISHED_DATA_URL + '?v=' + Date.now(), { cache: 'no-store' });
+      // 1) Consulta BARATA (HEAD, unos bytes): ¿cambió el archivo publicado?
+      //    Evita bajar los ~6 MB del catálogo en cada visita (clave en celulares).
+      let tag = '';
+      try {
+        const head = await fetchTimeout(App.PUBLISHED_DATA_URL, { method: 'HEAD', cache: 'no-store' }, 8000);
+        if (head.ok) {
+          tag = head.headers.get('etag') || head.headers.get('last-modified') || '';
+          if (tag && tag === (await DB.kvGet(KV_ETAG))) return; // sin cambios: no descargar
+        }
+      } catch (_e) { /* sin HEAD disponible: seguimos con la descarga completa */ }
+
+      // 2) Descarga completa solo si hay novedad (o si no se pudo verificar).
+      const res = await fetchTimeout(App.PUBLISHED_DATA_URL + '?v=' + Date.now(), { cache: 'no-store' }, 30000);
       if (!res.ok) return;
       const data = await res.json();
       const remote = data && data.meta && Number(data.meta.exportedAt);
       if (!remote) return;
       const local = Number(await DB.kvGet(KV_PUBLISHED)) || 0;
-      if (remote <= local) return; // ya está al día
-      await importAll(data, { merge: false });
-      await DB.kvSet(KV_PUBLISHED, remote);
-      console.info('[Store] Catálogo publicado importado:', new Date(remote).toLocaleString());
+      if (remote > local) {
+        await importAll(data, { merge: false });
+        await DB.kvSet(KV_PUBLISHED, remote);
+        console.info('[Store] Catálogo publicado importado:', new Date(remote).toLocaleString());
+      }
+      if (tag) await DB.kvSet(KV_ETAG, tag); // recordar versión verificada
     } catch (e) {
-      console.warn('[Store] No se pudo leer el catálogo publicado (¿offline?)', e);
+      console.warn('[Store] No se pudo verificar el catálogo publicado (¿offline?)', e);
     }
   }
 

@@ -16,7 +16,7 @@
 // Antes faltaban css/etapa5.css, todos los js/etapa5/*, el mapeo asistido y
 // el logo: instalada la PWA, esos archivos no existían offline y además el
 // caché viejo seguía sirviendo código desactualizado.
-const CACHE = 'tienda-pwa-v20'; // v20 = fix: el SW no se registraba (evento 'load' perdido); promos estables al recargar
+const CACHE = 'tienda-pwa-v21'; // v21 = ETAPA 6: Asistente "TECNO" (css/asistente.css + js/asistente/*) al precache
 
 const SHELL = [
   './',
@@ -26,6 +26,7 @@ const SHELL = [
   'css/storefront.css',
   'css/admin.css',
   'css/etapa5.css',
+  'css/asistente.css',
   'js/config.js',
   'js/utils.js',
   'js/db.js',
@@ -71,6 +72,12 @@ const SHELL = [
   'js/etapa5/e5-optimize.js',
   'js/etapa5/e5-config.js',
   'js/etapa5/ui-admin-etapa5-p4.js',
+  'js/asistente/ast-config.js',
+  'js/asistente/ast-data.js',
+  'js/asistente/ast-nlu.js',
+  'js/asistente/ast-engine.js',
+  'js/asistente/ast-ui.js',
+  'js/asistente/ast-admin.js',
   'js/app.js',
   'icons/icon.svg',
   'icons/icon-maskable.svg',

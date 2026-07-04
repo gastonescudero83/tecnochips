@@ -22,6 +22,8 @@
   <link rel="stylesheet" href="css/admin.css" />
   <!-- ETAPA 5 — Plataforma comercial (aditivo, namespaced .e5-*) -->
   <link rel="stylesheet" href="css/etapa5.css" />
+  <!-- ETAPA 6 — Asistente Inteligente "TECNO" (aditivo, namespaced .ast-*) -->
+  <link rel="stylesheet" href="css/asistente.css" />
 </head>
 <body>
   <!-- Splash de carga inicial -->
@@ -99,6 +101,21 @@
   <script src="js/etapa5/e5-optimize.js"></script>
   <script src="js/etapa5/e5-config.js"></script>
   <script src="js/etapa5/ui-admin-etapa5-p4.js"></script>
+
+  <!-- =========================================================================
+       ETAPA 6 — Asistente Inteligente de Compras "TECNO" (módulos aditivos).
+       Vendedor virtual 100% local y offline: NO usa APIs de IA ni servicios de
+       pago. Reutiliza App.Search (búsqueda), App.Store (catálogo/precios),
+       App.Cart, App.WhatsApp y App.E5. Cuelga de window.App.Asst y guarda su
+       config/FAQ en IndexedDB (sin tocar el esquema ni la funcionalidad previa).
+       Orden: config → datos → comprensión (NLU) → motor → UI → panel admin.
+       ====================================================================== -->
+  <script src="js/asistente/ast-config.js"></script>
+  <script src="js/asistente/ast-data.js"></script>
+  <script src="js/asistente/ast-nlu.js"></script>
+  <script src="js/asistente/ast-engine.js"></script>
+  <script src="js/asistente/ast-ui.js"></script>
+  <script src="js/asistente/ast-admin.js"></script>
 
   <script src="js/app.js"></script>
 </body>

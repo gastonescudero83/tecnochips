@@ -371,16 +371,44 @@
 }
 
 /* ============================ RESPONSIVE ================================== *
- * En celulares la ventana ocupa casi toda la pantalla (hoja inferior). */
+ * En celulares: VENTANA FLOTANTE traslúcida (se ve algo del fondo detrás).
+ * El panel y sus partes usan fondos semitransparentes + desenfoque (vidrio
+ * esmerilado) para dejar entrever la tienda sin perder legibilidad. */
 @media (max-width: 560px) {
   .ast-panel {
-    width: 100vw; max-width: 100vw;
-    height: 88vh; max-height: 88vh;
-    left: 0; right: 0; bottom: 0;
-    border-radius: 18px 18px 0 0;
+    left: 12px; right: 12px;
+    bottom: calc(14px + var(--ast-safe-b));
+    width: auto; max-width: none;
+    height: 76vh; max-height: calc(100vh - 84px);
+    border-radius: 20px;
+    /* Superficie traslúcida + vidrio esmerilado (más transparente) */
+    background: color-mix(in srgb, var(--ast-surface) 48%, transparent);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    backdrop-filter: blur(18px) saturate(1.2);
+    border: .5px solid color-mix(in srgb, #ffffff 30%, transparent);
   }
-  .ast-panel--bl, .ast-panel--br { left: 0; right: 0; }
+  .ast-panel--bl, .ast-panel--br { left: 12px; right: 12px; }
+
+  /* Partes internas traslúcidas: dejan pasar el fondo desenfocado */
+  .ast-head  { background: color-mix(in srgb, var(--ast-brand) 64%, transparent); }
+  .ast-body  { background: color-mix(in srgb, var(--ast-bg) 22%, transparent); }
+  .ast-input { background: color-mix(in srgb, var(--ast-surface) 46%, transparent); }
+  .ast-foot  { background: transparent; }
+  .ast-input__field { background: color-mix(in srgb, var(--ast-bg) 60%, transparent); }
+
+  /* Burbujas casi opacas para que el texto se lea SIEMPRE nítido */
+  .ast-bubble--bot  { background: color-mix(in srgb, var(--ast-bot) 94%, transparent); }
+  .ast-bubble--user { background: color-mix(in srgb, var(--ast-user) 94%, transparent); }
+
   .ast-launcher { bottom: calc(14px + var(--ast-safe-b)); }
+}
+
+/* Si el navegador no soporta desenfoque, subimos la opacidad para legibilidad */
+@media (max-width: 560px) {
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .ast-panel { background: color-mix(in srgb, var(--ast-surface) 82%, transparent); }
+    .ast-body  { background: color-mix(in srgb, var(--ast-bg) 68%, transparent); }
+  }
 }
 
 /* ============================ MASCOTA ROBOT ============================== */

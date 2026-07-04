@@ -1,0 +1,419 @@
+/* =============================================================================
+ * asistente.css — Asistente Inteligente de Compras "TECNO" (ETAPA 6)
+ * -----------------------------------------------------------------------------
+ * Estilos 100% aditivos y namespaced con el prefijo .ast-* para NO colisionar
+ * con nada de la tienda ni del panel. Engancha a las variables de tema que la
+ * tienda ya inyecta en :root (--c-primary, --c-accent, --c-surface, …) para
+ * combinar solo con la marca. El color de acento se puede sobreescribir en
+ * runtime desde la configuración (JS setea --ast-accent en el contenedor).
+ *
+ * Incluye modo claro/oscuro automático (prefers-color-scheme) y diseño
+ * responsive: ventana flotante en PC/tablet y hoja inferior a pantalla casi
+ * completa en el celular.
+ * ========================================================================== */
+
+/* ---- Capa de variables propia (aislada de la tienda) --------------------- */
+.ast-root {
+  /* Acento: lo puede pisar el JS con --ast-accent desde la config */
+  --ast-accent: var(--c-accent, #c0894a);
+  --ast-brand: var(--c-primary, #2b2722);
+  --ast-brand-ink: #f5efe4;          /* texto sobre la barra de marca */
+  --ast-accent-ink: #16120e;         /* texto sobre botones de acento */
+
+  --ast-bg: var(--c-bg, #efeae0);    /* fondo del área de mensajes */
+  --ast-surface: var(--c-surface, #ffffff);
+  --ast-card: var(--c-surface, #ffffff);
+  --ast-text: var(--c-text, #2b2722);
+  --ast-muted: var(--c-muted, #8a8073);
+  --ast-border: color-mix(in srgb, var(--ast-text) 12%, transparent);
+  --ast-bot: var(--c-surface, #ffffff);
+  --ast-user: var(--ast-brand);
+  --ast-user-ink: #f3ede2;
+  --ast-ok: var(--c-success, #2e9e5b);
+  --ast-wsp: var(--c-whatsapp, #25d366);
+
+  --ast-radius: 16px;
+  --ast-shadow: 0 12px 34px rgba(16, 12, 8, .22);
+  --ast-z: 2147480000;               /* alto, pero por debajo de 2^31 */
+  --ast-font: var(--font, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif);
+
+  font-family: var(--ast-font);
+}
+
+/* Insets para dispositivos con notch (iPhone) */
+.ast-launcher, .ast-panel {
+  --ast-safe-b: env(safe-area-inset-bottom, 0px);
+  --ast-safe-r: env(safe-area-inset-right, 0px);
+  --ast-safe-l: env(safe-area-inset-left, 0px);
+}
+
+/* ============================ BOTÓN FLOTANTE ============================== */
+.ast-launcher {
+  position: fixed;
+  bottom: calc(18px + var(--ast-safe-b));
+  z-index: var(--ast-z);
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  height: 60px;
+  padding: 0 6px;
+  border: none;
+  border-radius: 999px;
+  background: var(--ast-accent);
+  color: var(--ast-accent-ink);
+  box-shadow: var(--ast-shadow);
+  cursor: pointer;
+  font-family: var(--ast-font);
+  transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+}
+.ast-launcher:hover { transform: translateY(-2px) scale(1.03); }
+.ast-launcher:active { transform: scale(.97); }
+.ast-launcher--br { right: calc(18px + var(--ast-safe-r)); }
+.ast-launcher--bl { left: calc(18px + var(--ast-safe-l)); }
+
+/* Círculo del ícono */
+.ast-launcher__icon {
+  width: 48px; height: 48px;
+  flex: 0 0 auto;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; line-height: 1;
+}
+/* Etiqueta opcional al costado ("¿Buscás algo?") */
+.ast-launcher__label {
+  font-size: 14px; font-weight: 600; white-space: nowrap;
+  padding-right: 10px;
+}
+.ast-launcher--no-label { padding: 0; }
+.ast-launcher--no-label .ast-launcher__icon { width: 60px; height: 60px; font-size: 28px; }
+
+/* Globito de notificación */
+.ast-launcher__badge {
+  position: absolute; top: -2px;
+  min-width: 21px; height: 21px; padding: 0 5px;
+  border-radius: 999px;
+  background: var(--c-danger, #c0392b); color: #fff;
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--ast-bg);
+}
+.ast-launcher--br .ast-launcher__badge { right: -2px; }
+.ast-launcher--bl .ast-launcher__badge { left: -2px; }
+
+.ast-launcher[hidden] { display: none; }
+
+/* ============================== VENTANA =================================== */
+.ast-panel {
+  position: fixed;
+  bottom: calc(18px + var(--ast-safe-b));
+  z-index: var(--ast-z);
+  width: 370px;
+  max-width: calc(100vw - 32px);
+  height: 560px;
+  max-height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
+  background: var(--ast-surface);
+  border-radius: var(--ast-radius);
+  box-shadow: var(--ast-shadow);
+  overflow: hidden;
+  transform-origin: bottom right;
+  animation: ast-pop .22s cubic-bezier(.2, .9, .3, 1.1);
+}
+.ast-panel--br { right: calc(18px + var(--ast-safe-r)); transform-origin: bottom right; }
+.ast-panel--bl { left: calc(18px + var(--ast-safe-l)); transform-origin: bottom left; }
+.ast-panel[hidden] { display: none; }
+
+@keyframes ast-pop {
+  from { opacity: 0; transform: translateY(18px) scale(.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---- Encabezado ---------------------------------------------------------- */
+.ast-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 12px;
+  background: var(--ast-brand);
+  color: var(--ast-brand-ink);
+}
+.ast-head__avatar {
+  width: 38px; height: 38px; flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--ast-accent); color: var(--ast-accent-ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 21px; line-height: 1;
+}
+.ast-head__meta { min-width: 0; }
+.ast-head__title { font-size: 15px; font-weight: 600; line-height: 1.15; }
+.ast-head__status {
+  font-size: 11.5px; opacity: .85;
+  display: flex; align-items: center; gap: 5px; margin-top: 2px;
+}
+.ast-head__dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--ast-ok);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--ast-ok) 70%, transparent);
+  animation: ast-pulse 2s infinite;
+}
+@keyframes ast-pulse {
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ast-ok) 55%, transparent); }
+  70%  { box-shadow: 0 0 0 6px color-mix(in srgb, var(--ast-ok) 0%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ast-ok) 0%, transparent); }
+}
+.ast-head__actions { margin-left: auto; display: flex; gap: 2px; }
+.ast-head__btn {
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: transparent;
+  color: var(--ast-brand-ink); opacity: .85;
+  border-radius: 8px; font-size: 18px; line-height: 1; cursor: pointer;
+}
+.ast-head__btn:hover { opacity: 1; background: rgba(255, 255, 255, .12); }
+
+/* ---- Cuerpo / mensajes --------------------------------------------------- */
+.ast-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 14px 12px;
+  background: var(--ast-bg);
+  display: flex; flex-direction: column; gap: 10px;
+  scrollbar-width: thin;
+}
+.ast-body::-webkit-scrollbar { width: 8px; }
+.ast-body::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--ast-muted) 40%, transparent);
+  border-radius: 8px;
+}
+
+.ast-row { display: flex; }
+.ast-row--user { justify-content: flex-end; }
+
+.ast-bubble {
+  max-width: 85%;
+  padding: 9px 12px;
+  border-radius: 15px;
+  font-size: 14px; line-height: 1.5;
+  word-wrap: break-word; overflow-wrap: anywhere;
+  white-space: pre-wrap;                 /* respeta saltos de línea de las FAQ */
+}
+.ast-bubble--bot {
+  background: var(--ast-bot); color: var(--ast-text);
+  border: .5px solid var(--ast-border);
+  border-bottom-left-radius: 5px;
+}
+.ast-bubble--user {
+  background: var(--ast-user); color: var(--ast-user-ink);
+  border-bottom-right-radius: 5px;
+}
+.ast-bubble a { color: var(--ast-accent); text-decoration: underline; }
+.ast-bubble--user a { color: inherit; }
+
+/* ---- Chips de acceso rápido / sugerencias -------------------------------- */
+.ast-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.ast-chip {
+  font-size: 13px; padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--ast-surface); color: var(--ast-text);
+  border: .5px solid var(--ast-accent);
+  display: inline-flex; align-items: center; gap: 5px;
+  cursor: pointer; line-height: 1.2;
+  transition: background .15s ease, color .15s ease;
+}
+.ast-chip:hover { background: var(--ast-accent); color: var(--ast-accent-ink); }
+.ast-chip__ico { font-size: 15px; }
+
+/* ---- Tarjetas de producto ------------------------------------------------ */
+.ast-products { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.ast-pcard {
+  display: flex; gap: 10px; align-items: center;
+  padding: 8px;
+  background: var(--ast-card);
+  border: .5px solid var(--ast-border);
+  border-radius: 12px;
+  transition: border-color .15s ease, transform .15s ease;
+}
+.ast-pcard:hover { border-color: var(--ast-accent); transform: translateY(-1px); }
+.ast-pcard__media {
+  position: relative;
+  width: 56px; height: 56px; flex: 0 0 auto;
+  border-radius: 10px; overflow: hidden;
+  background: color-mix(in srgb, var(--ast-accent) 14%, var(--ast-surface));
+  display: flex; align-items: center; justify-content: center;
+}
+.ast-pcard__media img { width: 100%; height: 100%; object-fit: cover; }
+.ast-pcard__media-ph { font-size: 25px; color: var(--ast-accent); }
+.ast-pcard__badge {
+  position: absolute; top: 2px; left: 2px;
+  font-size: 9.5px; font-weight: 700; line-height: 1;
+  padding: 2px 5px; border-radius: 6px;
+  background: var(--c-danger, #c0392b); color: #fff;
+}
+.ast-pcard__info { flex: 1 1 auto; min-width: 0; }
+.ast-pcard__brand {
+  font-size: 10.5px; color: var(--ast-muted);
+  text-transform: uppercase; letter-spacing: .04em;
+}
+.ast-pcard__name {
+  font-size: 13px; font-weight: 600; color: var(--ast-text);
+  line-height: 1.25;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ast-pcard__prices { display: flex; align-items: baseline; gap: 7px; margin-top: 3px; flex-wrap: wrap; }
+.ast-pcard__price { font-size: 14px; font-weight: 700; color: var(--ast-text); }
+.ast-pcard__old { font-size: 11px; color: var(--ast-muted); text-decoration: line-through; }
+.ast-pcard__acts { display: flex; flex-direction: column; gap: 5px; flex: 0 0 auto; }
+.ast-pbtn {
+  font-size: 11.5px; padding: 6px 10px;
+  border-radius: 8px; border: none; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  white-space: nowrap; line-height: 1;
+}
+.ast-pbtn--ghost { background: transparent; border: .5px solid var(--ast-border); color: var(--ast-text); }
+.ast-pbtn--ghost:hover { border-color: var(--ast-accent); }
+.ast-pbtn--primary { background: var(--ast-accent); color: var(--ast-accent-ink); }
+.ast-pbtn--primary:hover { filter: brightness(.96); }
+.ast-pbtn--wsp { background: var(--ast-wsp); color: #0b3d1e; }
+
+/* "Ver más resultados" */
+.ast-more {
+  align-self: center;
+  font-size: 12.5px; padding: 7px 14px; margin-top: 2px;
+  background: transparent; border: .5px solid var(--ast-border);
+  border-radius: 999px; color: var(--ast-text); cursor: pointer;
+}
+.ast-more:hover { border-color: var(--ast-accent); }
+
+/* ---- Indicador de "escribiendo…" ---------------------------------------- */
+.ast-typing {
+  display: inline-flex; gap: 4px; align-items: center;
+  padding: 11px 13px;
+  background: var(--ast-bot); border: .5px solid var(--ast-border);
+  border-radius: 15px; border-bottom-left-radius: 5px;
+  width: fit-content;
+}
+.ast-typing span {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--ast-muted);
+  animation: ast-bounce 1s infinite;
+}
+.ast-typing span:nth-child(2) { animation-delay: .18s; }
+.ast-typing span:nth-child(3) { animation-delay: .36s; }
+@keyframes ast-bounce {
+  0%, 60%, 100% { opacity: .3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-3px); }
+}
+
+/* ---- Barra de entrada ---------------------------------------------------- */
+.ast-input {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px;
+  background: var(--ast-surface);
+  border-top: .5px solid var(--ast-border);
+}
+.ast-input__field {
+  flex: 1 1 auto; min-width: 0;
+  height: 40px; padding: 0 15px;
+  border-radius: 999px;
+  border: .5px solid var(--ast-border);
+  background: var(--ast-bg);
+  color: var(--ast-text);
+  font-size: 14px; font-family: var(--ast-font);
+  outline: none;
+}
+.ast-input__field::placeholder { color: var(--ast-muted); }
+.ast-input__field:focus { border-color: var(--ast-accent); }
+.ast-input__send {
+  width: 40px; height: 40px; flex: 0 0 auto;
+  border: none; border-radius: 50%;
+  background: var(--ast-accent); color: var(--ast-accent-ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; cursor: pointer;
+  transition: transform .12s ease;
+}
+.ast-input__send:hover { transform: scale(1.05); }
+.ast-input__send:disabled { opacity: .5; cursor: default; transform: none; }
+
+/* Pie discreto */
+.ast-foot {
+  text-align: center; font-size: 10.5px; color: var(--ast-muted);
+  padding: 0 0 6px; background: var(--ast-surface);
+}
+
+/* ============================ MODO OSCURO ================================= *
+ * Se activa solo si el sistema/navegador está en oscuro. Si en el futuro la
+ * tienda agrega un toggle, basta con poner la clase .ast-dark en .ast-root. */
+@media (prefers-color-scheme: dark) {
+  .ast-root:not(.ast-light) {
+    --ast-brand: #211c17;
+    --ast-bg: #14110d;
+    --ast-surface: #1d1913;
+    --ast-card: #241f1a;
+    --ast-text: #efeae0;
+    --ast-muted: #a99f8f;
+    --ast-border: color-mix(in srgb, #efeae0 13%, transparent);
+    --ast-bot: #2f2a23;
+    --ast-user: var(--ast-accent);
+    --ast-user-ink: #1a1510;
+  }
+}
+.ast-root.ast-dark {
+  --ast-brand: #211c17;
+  --ast-bg: #14110d;
+  --ast-surface: #1d1913;
+  --ast-card: #241f1a;
+  --ast-text: #efeae0;
+  --ast-muted: #a99f8f;
+  --ast-border: color-mix(in srgb, #efeae0 13%, transparent);
+  --ast-bot: #2f2a23;
+  --ast-user: var(--ast-accent);
+  --ast-user-ink: #1a1510;
+}
+
+/* ============================ RESPONSIVE ================================== *
+ * En celulares la ventana ocupa casi toda la pantalla (hoja inferior). */
+@media (max-width: 560px) {
+  .ast-panel {
+    width: 100vw; max-width: 100vw;
+    height: 88vh; max-height: 88vh;
+    left: 0; right: 0; bottom: 0;
+    border-radius: 18px 18px 0 0;
+  }
+  .ast-panel--bl, .ast-panel--br { left: 0; right: 0; }
+  .ast-launcher { bottom: calc(14px + var(--ast-safe-b)); }
+}
+
+/* ============================ MASCOTA ROBOT ============================== */
+/* Contenedores con mascota/imagen: sin fondo ni tipografía de emoji */
+.ast-avatar--rich { background: transparent !important; overflow: visible; }
+.ast-mascot { display: block; width: 100%; height: 100%; line-height: 0; }
+.ast-mascot svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.ast-avatar-img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; }
+
+/* Flota todo el robot */
+.ast-mascot__bot { animation: ast-float 3s ease-in-out infinite; transform-origin: center; }
+@keyframes ast-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5%); }
+}
+/* Parpadeo de los ojos (cada ojo escala sobre su propio centro) */
+.ast-mascot__eye { transform-box: fill-box; transform-origin: center; animation: ast-blink 4.2s ease-in-out infinite; }
+@keyframes ast-blink {
+  0%, 91%, 100% { transform: scaleY(1); }
+  94%, 97%      { transform: scaleY(0.12); }
+}
+/* Pulso de la antena y del "corazón" del cuerpo */
+.ast-mascot__pulse { transform-box: fill-box; transform-origin: center; animation: ast-pulse 1.8s ease-in-out infinite; }
+@keyframes ast-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.3); opacity: 0.55; }
+}
+/* En el botón flotante el robot ocupa todo el círculo */
+.ast-launcher__icon.ast-avatar--rich { width: 60px; height: 60px; }
+
+/* Accesibilidad: respetar "reducir movimiento" */
+@media (prefers-reduced-motion: reduce) {
+  .ast-panel { animation: none; }
+  .ast-head__dot, .ast-typing span, .ast-launcher,
+  .ast-mascot__bot, .ast-mascot__eye, .ast-mascot__pulse { animation: none; transition: none; }
+}

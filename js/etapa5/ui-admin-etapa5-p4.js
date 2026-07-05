@@ -59,6 +59,14 @@
     // Acciones
     const pctInput = input({ type: 'number', value: 10, style: { width: '80px' } });
     const catMove = U.el('select', { class: 'a-input' }, cats.map((ct) => U.el('option', { value: ct.id, text: ct.name })));
+    const subMove = U.el('select', { class: 'a-input' });
+    function fillSubMove() {
+      U.clear(subMove);
+      subMove.appendChild(U.el('option', { value: '', text: '— Sin subcategoría —' }));
+      const c = cats.find((ct) => ct.id === catMove.value);
+      (c ? c.subcategories || [] : []).forEach((s) => subMove.appendChild(U.el('option', { value: s.id, text: s.name })));
+    }
+    catMove.addEventListener('change', fillSubMove); fillSubMove();
     let bulkImgs = [];
 
     const actions = U.el('div', { class: 'a-form' }, [
@@ -70,8 +78,8 @@
         ]),
       ]),
       U.el('div', { class: 'a-card' }, [
-        U.el('strong', { text: 'Mover a categoría' }),
-        U.el('div', { style: { display: 'flex', gap: '.5rem', marginTop: '.4rem' } }, [catMove, U.el('button', { class: 'btn btn--primary btn--sm', text: 'Mover', onClick: async () => { if (!need()) return; const n = await E5.Bulk.moveCategory(ids(), catMove.value); U.toast(n + ' movidos', 'success'); reRender(); } })]),
+        U.el('strong', { text: 'Mover a categoría / subcategoría' }),
+        U.el('div', { style: { display: 'flex', gap: '.5rem', marginTop: '.4rem', flexWrap: 'wrap' } }, [catMove, subMove, U.el('button', { class: 'btn btn--primary btn--sm', text: 'Mover', onClick: async () => { if (!need()) return; const n = await E5.Bulk.moveCategory(ids(), catMove.value, subMove.value); U.toast(n + ' movidos', 'success'); reRender(); } })]),
       ]),
       U.el('div', { class: 'a-card' }, [
         U.el('strong', { text: 'Visibilidad' }),

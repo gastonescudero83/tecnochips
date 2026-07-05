@@ -48,7 +48,13 @@
       }
     } else if (seg[0] === 'categoria') {
       const c = S.getCategory(seg[1]);
-      if (c) { title = c.name + ' — ' + store; desc = 'Productos de ' + c.name + ' en ' + store; }
+      if (c) {
+        // Subcategoría (seg[2]): meta propias, sin perder compatibilidad con
+        // la URL de solo categoría (seg[2] ausente).
+        const sub = seg[2] && S.getSubcategory(seg[1], seg[2]);
+        if (sub) { title = sub.name + ' — ' + c.name + ' — ' + store; desc = 'Productos de ' + sub.name + ' en ' + c.name + ' — ' + store; }
+        else { title = c.name + ' — ' + store; desc = 'Productos de ' + c.name + ' en ' + store; }
+      }
     } else if (seg[0] === 'marca' && App.E5.Brands) {
       const b = App.E5.Brands.bySlug(seg[1]) || App.E5.Brands.get(seg[1]);
       if (b) { title = b.name + ' — ' + store; desc = b.description || ('Productos ' + b.name); image = b.cover || b.logo || image; }
@@ -81,7 +87,10 @@
   function sitemap() {
     const base = baseUrl();
     const urls = ['', '#/ofertas', '#/novedades', '#/destacados', '#/marcas'];
-    (S.state.categories || []).forEach((c) => urls.push('#/categoria/' + c.id));
+    (S.state.categories || []).forEach((c) => {
+      urls.push('#/categoria/' + c.id);
+      (c.subcategories || []).forEach((s) => urls.push('#/categoria/' + c.id + '/' + s.id));
+    });
     (S.state.products || []).filter((p) => p.active !== false).forEach((p) => urls.push('#/producto/' + p.id));
     const body = urls.map((u) => `  <url><loc>${base}${u}</loc></url>`).join('\n');
     return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>`;

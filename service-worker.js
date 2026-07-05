@@ -16,7 +16,7 @@
 // Antes faltaban css/etapa5.css, todos los js/etapa5/*, el mapeo asistido y
 // el logo: instalada la PWA, esos archivos no existían offline y además el
 // caché viejo seguía sirviendo código desactualizado.
-const CACHE = 'tienda-pwa-v22'; // v22 = Chat mobile flotante translúcido (fuerza refresco de css/asistente.css)
+const CACHE = 'tienda-pwa-v24'; // v24 = Banner de promos configurable (panel + js/etapa5/ui-admin-promo.js)
 
 const SHELL = [
   './',
@@ -65,6 +65,7 @@ const SHELL = [
   'js/etapa5/e5-share.js',
   'js/etapa5/e5-related.js',
   'js/etapa5/e5-search-suggest.js',
+  'js/etapa5/e5-promo-banner.js',
   'js/etapa5/ui-storefront-etapa5.js',
   'js/etapa5/e5-export.js',
   'js/etapa5/e5-bulk.js',
@@ -72,6 +73,7 @@ const SHELL = [
   'js/etapa5/e5-optimize.js',
   'js/etapa5/e5-config.js',
   'js/etapa5/ui-admin-etapa5-p4.js',
+  'js/etapa5/ui-admin-promo.js',
   'js/asistente/ast-config.js',
   'js/asistente/ast-data.js',
   'js/asistente/ast-nlu.js',

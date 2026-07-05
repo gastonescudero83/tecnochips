@@ -266,14 +266,38 @@
     return sub;
   }
 
-  async function deleteSubcategory(catId, subId) {
+  /** Renombra una subcategoría existente (edición manual desde el admin).
+   *  No toca los productos: siguen apuntando al mismo subId. */
+  async function renameSubcategory(catId, subId, name) {
+    const c = getCategory(catId);
+    if (!c) return null;
+    const sub = (c.subcategories || []).find((s) => s.id === subId);
+    if (!sub) return null;
+    const clean = String(name || '').trim();
+    if (clean) sub.name = clean;
+    await saveCategory(c);
+    emit('categories', { type: 'subrename', catId, subId });
+    return sub;
+  }
+
+  /** Cantidad de productos asignados a una subcategoría (para mostrarla en el
+   *  admin antes de renombrar/eliminar). */
+  function productCountInSubcategory(catId, subId) {
+    return state.products.filter((p) => p.categoryId === catId && p.subcategoryId === subId).length;
+  }
+
+  /** Elimina una subcategoría. Por defecto (2 args, comportamiento previo sin
+   *  cambios) los productos afectados quedan sin subcategoría. Si se pasa
+   *  reassignToId, se reasignan a esa otra subcategoría en vez de perderla:
+   *  el admin puede elegir "mover a otra" antes de confirmar el borrado. */
+  async function deleteSubcategory(catId, subId, reassignToId) {
     const c = getCategory(catId);
     if (!c) return;
     c.subcategories = (c.subcategories || []).filter((s) => s.id !== subId);
     await saveCategory(c);
     const affected = state.products.filter((p) => p.subcategoryId === subId);
-    for (const p of affected) { p.subcategoryId = ''; await DB.put(STORES.PRODUCTS, p); }
-    emit('categories', { type: 'subdelete', catId, subId });
+    for (const p of affected) { p.subcategoryId = reassignToId || ''; await DB.put(STORES.PRODUCTS, p); }
+    emit('categories', { type: 'subdelete', catId, subId, reassignToId: reassignToId || null });
   }
 
   /* ---- COMENTARIOS -------------------------------------------------------- */
@@ -527,6 +551,7 @@
     getProduct, saveProduct, deleteProduct, bulkUpsertProducts,
     // categorías
     getCategory, getSubcategory, saveCategory, deleteCategory, addSubcategory, deleteSubcategory,
+    renameSubcategory, productCountInSubcategory,
     // comentarios
     commentsFor, ratingFor, saveComment, deleteComment,
     // seguridad

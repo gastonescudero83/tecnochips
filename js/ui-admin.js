@@ -451,19 +451,51 @@
           U.el('button', { class: 'btn btn--sm btn--danger-ghost', text: '🗑', onClick: () => removeCategory(cat) }),
         ]),
       ]));
-      // Subcategorías
+      // Subcategorías: nombre (click para renombrar) + cantidad de productos + quitar
       const subs = U.el('div', { class: 'a-subs' });
       (cat.subcategories || []).forEach((s) => {
+        const count = Store.productCountInSubcategory(cat.id, s.id);
+        const nameSpan = U.el('span', {
+          text: s.name + (count ? ' (' + count + ')' : ''),
+          title: 'Click para renombrar',
+          style: { cursor: 'pointer' },
+        });
+        nameSpan.addEventListener('click', () => {
+          const editInput = inp({ type: 'text', value: s.name, class: 'input input--sm a-sub-input' });
+          nameSpan.replaceWith(editInput);
+          editInput.focus(); editInput.select();
+          let done = false;
+          const save = async () => {
+            if (done) return; done = true;
+            const val = editInput.value.trim();
+            if (val && val !== s.name) {
+              await Store.renameSubcategory(cat.id, s.id, val);
+              U.toast('Subcategoría renombrada', 'success');
+            }
+            renderRoute(Router.current());
+          };
+          editInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); save(); }
+            else if (e.key === 'Escape') { e.preventDefault(); done = true; renderRoute(Router.current()); }
+          });
+          editInput.addEventListener('blur', save);
+        });
         subs.appendChild(U.el('span', { class: 'a-sub' }, [
-          U.el('span', { text: s.name }),
-          U.el('button', { class: 'a-sub__del', text: '✕', title: 'Quitar', onClick: async () => { await Store.deleteSubcategory(cat.id, s.id); renderRoute(Router.current()); } }),
+          nameSpan,
+          U.el('button', { class: 'a-sub__del', text: '✕', title: 'Eliminar', onClick: () => removeSubcategory(cat, s, count) }),
         ]));
       });
       const addSub = inp({ type: 'text', placeholder: 'Nueva subcategoría…', class: 'input input--sm a-sub-input' });
-      addSub.addEventListener('keydown', async (e) => {
-        if (e.key === 'Enter' && addSub.value.trim()) { e.preventDefault(); await Store.addSubcategory(cat.id, addSub.value.trim()); renderRoute(Router.current()); }
-      });
+      const doAddSub = async () => {
+        const val = addSub.value.trim();
+        if (!val) return;
+        await Store.addSubcategory(cat.id, val);
+        renderRoute(Router.current());
+      };
+      addSub.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); doAddSub(); } });
+      // Botón visible además del Enter: que se pueda agregar sin adivinar el atajo.
       subs.appendChild(addSub);
+      subs.appendChild(U.el('button', { class: 'btn btn--sm btn--ghost', type: 'button', text: '➕ Agregar', onClick: doAddSub }));
       card.appendChild(subs);
       list.appendChild(card);
     });
@@ -518,6 +550,48 @@
     await Store.deleteCategory(cat.id);
     U.toast('Categoría eliminada', 'success');
     renderRoute(Router.current());
+  }
+
+  /** Elimina una subcategoría. Si no tiene productos, confirma y listo. Si
+   *  tiene, pregunta si dejarlos sin subcategoría o moverlos a otra de la
+   *  misma categoría antes de borrar — nunca se pierde el dato en silencio. */
+  async function removeSubcategory(cat, sub, count) {
+    if (!count) {
+      const yes = await U.confirm(`¿Eliminar la subcategoría "${sub.name}"?`, { danger: true, okText: 'Eliminar' });
+      if (!yes) return;
+      await Store.deleteSubcategory(cat.id, sub.id);
+      U.toast('Subcategoría eliminada', 'success');
+      renderRoute(Router.current());
+      return;
+    }
+
+    const others = (cat.subcategories || []).filter((s) => s.id !== sub.id);
+    const moveSel = others.length
+      ? U.el('select', { class: 'input' }, [U.el('option', { value: '', text: '— Dejar sin subcategoría —' })].concat(
+        others.map((s) => U.el('option', { value: s.id, text: s.name }))
+      ))
+      : null;
+
+    const cancelBtn = U.el('button', { class: 'btn btn--ghost', type: 'button', text: 'Cancelar' });
+    const okBtn = U.el('button', { class: 'btn btn--danger', type: 'button', text: 'Eliminar' });
+
+    const body = U.el('div', { class: 'a-form' }, [
+      U.el('p', { text: `"${sub.name}" tiene ${count} producto(s) asignado(s). ¿Qué hacemos con ellos?` }),
+      moveSel
+        ? f('Mover a otra subcategoría (opcional)', moveSel, 'Si no elegís ninguna, quedan sin subcategoría.')
+        : U.el('p', { class: 'a-muted', text: 'No hay otra subcategoría en esta categoría: quedarán sin subcategoría.' }),
+      U.el('div', { class: 'a-form__foot' }, [cancelBtn, okBtn]),
+    ]);
+
+    const m = modal('Eliminar subcategoría', body);
+    cancelBtn.addEventListener('click', m.close);
+    okBtn.addEventListener('click', async () => {
+      const reassignTo = moveSel ? moveSel.value : '';
+      await Store.deleteSubcategory(cat.id, sub.id, reassignTo || undefined);
+      m.close();
+      U.toast('Subcategoría eliminada', 'success');
+      renderRoute(Router.current());
+    });
   }
 
   /* ====================================================================== *

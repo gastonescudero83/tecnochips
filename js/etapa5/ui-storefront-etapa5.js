@@ -111,6 +111,10 @@
   /* ===================== BANNER DE PORTADA =============================== */
   let bannerTimer = null; // un único timer vivo (antes se creaba uno por visita al home)
   function homeTop(view) {
+    // Banner dinámico de promociones: texto generado del catálogo real, cambia
+    // en cada carga y lleva a esos productos. Va antes del early-return para
+    // mostrarse aunque no haya banners de imagen cargados.
+    if (E5.PromoBanner) { const pb = E5.PromoBanner.build(); if (pb) view.appendChild(pb); }
     if (!E5.Banners) return;
     const banners = E5.Banners.activeOrdered();
     if (!banners.length) return;

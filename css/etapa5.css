@@ -96,3 +96,31 @@
 /* Lazy loading: imagen aún no cargada */
 img.e5-lazy { filter: blur(8px); transition: filter .3s ease; background: rgba(0,0,0,.05); }
 img.e5-lazy.is-loaded { filter: none; }
+
+/* ===================== BANNER DINÁMICO DE PROMOCIONES ===================== *
+ * Barra de texto que cambia en cada carga (mensaje del catálogo real). */
+.e5-promo {
+  display: flex; align-items: center; gap: 10px;
+  margin: 0 0 1rem;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--color-primary, #2b2722), var(--color-accent, #c0894a));
+  color: #fff; text-decoration: none;
+  font-size: 14px; font-weight: 600; line-height: 1.2;
+  box-shadow: 0 4px 14px rgba(0,0,0,.12);
+  transition: transform .15s ease, box-shadow .15s ease;
+  animation: e5-promo-in .4s ease;
+}
+.e5-promo:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+.e5-promo:active { transform: scale(.99); }
+.e5-promo__tag {
+  flex: 0 0 auto;
+  font-size: 11px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
+  background: color-mix(in srgb, currentColor 22%, transparent);  /* se adapta al color del texto */
+  padding: 3px 9px; border-radius: 999px;
+}
+.e5-promo__text { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.e5-promo__go { flex: 0 0 auto; font-weight: 700; opacity: .95; }
+.e5-promo__go::after { content: ' \203A'; }   /* › */
+@keyframes e5-promo-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .e5-promo { animation: none; } }

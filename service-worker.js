@@ -16,7 +16,7 @@
 // Antes faltaban css/etapa5.css, todos los js/etapa5/*, el mapeo asistido y
 // el logo: instalada la PWA, esos archivos no existían offline y además el
 // caché viejo seguía sirviendo código desactualizado.
-const CACHE = 'tienda-pwa-v24'; // v24 = Banner de promos configurable (panel + js/etapa5/ui-admin-promo.js)
+const CACHE = 'tienda-pwa-v25'; // v25 = Subcategorías: renombrar/contador/borrado con reasignación (admin) + mover en lote + SEO
 
 const SHELL = [
   './',

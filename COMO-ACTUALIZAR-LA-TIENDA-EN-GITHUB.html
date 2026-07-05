@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cómo actualizar tu tienda en GitHub — Guía paso a paso</title>
+<style>
+  :root{ --cobre:#c0894a; --tinta:#2b2722; --gris:#6b6b6b; --linea:#e7e0d5; --ok:#2e7d46; --aviso:#b3541e; --fondo:#faf7f2; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--fondo); color:var(--tinta);
+        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+        line-height:1.6; }
+  .wrap{ max-width:820px; margin:0 auto; padding:32px 22px 60px; }
+  header{ border-bottom:3px solid var(--cobre); padding-bottom:18px; margin-bottom:26px; }
+  .badge{ display:inline-block; background:var(--cobre); color:#fff; font-weight:700;
+          font-size:13px; letter-spacing:.5px; padding:4px 12px; border-radius:999px; }
+  h1{ font-size:27px; margin:12px 0 6px; }
+  .sub{ color:var(--gris); font-size:15px; margin:0; }
+  h2{ font-size:20px; margin:34px 0 10px; display:flex; align-items:center; gap:10px; }
+  h2 .n{ background:var(--cobre); color:#fff; width:30px; height:30px; border-radius:50%;
+         display:inline-flex; align-items:center; justify-content:center; font-size:16px; flex:0 0 auto; }
+  ol.pasos{ counter-reset:paso; list-style:none; padding:0; margin:14px 0; }
+  ol.pasos>li{ counter-increment:paso; position:relative; padding:12px 14px 12px 52px; margin:8px 0;
+        background:#fff; border:1px solid var(--linea); border-radius:12px; }
+  ol.pasos>li::before{ content:counter(paso); position:absolute; left:14px; top:12px;
+        width:26px; height:26px; background:var(--tinta); color:#fff; border-radius:50%;
+        display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; }
+  .btn{ display:inline-block; background:#eef6ee; color:var(--ok); border:1px solid #bcdcc0;
+        border-radius:6px; padding:1px 8px; font-weight:600; font-size:14px; white-space:nowrap; }
+  .k{ background:#f0ece3; border:1px solid var(--linea); border-radius:5px; padding:1px 7px;
+      font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13px; }
+  .caja{ border-radius:12px; padding:14px 16px; margin:16px 0; border:1px solid; }
+  .tip{ background:#eef6ee; border-color:#bcdcc0; }
+  .aviso{ background:#fdf1e7; border-color:#f0c9a8; }
+  .caja b{ display:block; margin-bottom:3px; }
+  .aviso b{ color:var(--aviso); }
+  .tip b{ color:var(--ok); }
+  code{ background:#f0ece3; border-radius:5px; padding:1px 6px; font-size:13px; }
+  .mini{ color:var(--gris); font-size:13.5px; }
+  footer{ margin-top:40px; padding-top:16px; border-top:1px solid var(--linea);
+          color:var(--gris); font-size:13px; }
+  a{ color:var(--cobre); }
+  @media print{ body{ background:#fff; } .wrap{ padding:0; } ol.pasos>li,.caja{ break-inside:avoid; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <span class="badge">TECNOCHIP'S</span>
+    <h1>Cómo actualizar tu tienda en GitHub</h1>
+    <p class="sub">Guía paso a paso para subir tus cambios vos mismo, sin saber programar.</p>
+  </header>
+
+  <p>Cada vez que cambies un archivo de la tienda en tu computadora (por ejemplo un <code>.js</code>, un <code>.css</code> o el <code>index.html</code>), tenés que subir ese archivo a GitHub para que se vea online. Se hace desde la página web de GitHub, arrastrando archivos. No hace falta instalar nada.</p>
+
+  <div class="tip caja">
+    <b>Antes de empezar necesitás</b>
+    1) Tu carpeta <code>tienda-online</code> en la PC. &nbsp; 2) Estar con tu sesión iniciada en GitHub. &nbsp; 3) Un navegador (Chrome, Edge, etc.).
+  </div>
+
+  <h2><span class="n">A</span> Método rápido: subir solo lo que cambió</h2>
+  <p class="mini">Usá este método casi siempre. Es el más ordenado: reemplazás solo los archivos que tocaste.</p>
+
+  <ol class="pasos">
+    <li>Entrá a tu repositorio: <a href="https://github.com/gastonescudero83/tecnochips">github.com/gastonescudero83/tecnochips</a></li>
+    <li><b>Entrá a la carpeta donde está el archivo que cambió.</b> Ejemplo: si cambiaste <code>css/asistente.css</code>, hacé clic en la carpeta <code>css</code>. Si cambiaste algo del asistente, entrá a <code>js</code> y después a <code>asistente</code>.</li>
+    <li>Arriba a la derecha, clic en <span class="btn">Add file ▾</span> <span class="mini">(en español: <b>Agregar archivo ▾</b>)</span> y elegí <span class="btn">Upload files</span> <span class="mini">(<b>Subir archivos</b>)</span>.</li>
+    <li>Arrastrá desde tu PC el o los archivos actualizados al recuadro grande (o clic en <b>choose your files</b> / <b>elige tus archivos</b>).<br>
+      <span class="mini">⚠️ El archivo debe llamarse <b>exactamente igual</b> que el que ya está (mismas mayúsculas). Así lo reemplaza en vez de duplicarlo.</span></li>
+    <li>Bajá hasta <b>Commit changes</b> (Confirmar cambios). En el primer casillero escribí una notita corta de qué cambiaste. Ejemplo: <code>Actualizo el robot del asistente</code>.</li>
+    <li>Dejá marcada la opción <b>Commit directly to the <code>main</code> branch</b> (Confirmar directamente en la rama principal).</li>
+    <li>Clic en el botón verde <span class="btn">Commit changes</span> <span class="mini">(<b>Confirmar cambios</b>)</span>. ¡Listo, ya está subido! ✅</li>
+  </ol>
+
+  <div class="tip caja">
+    <b>Consejo</b>
+    Si cambiaste varios archivos que están en la <b>misma carpeta</b>, podés arrastrarlos todos juntos y subirlos en un solo paso. Si están en carpetas distintas, hacé un envío por cada carpeta (repetí los pasos 2 a 7).
+  </div>
+
+  <h2><span class="n">B</span> Método completo: subir todo de nuevo</h2>
+  <p class="mini">Usalo solo si cambiaste muchos archivos a la vez y preferís reemplazar todo.</p>
+
+  <ol class="pasos">
+    <li>Entrá a tu repositorio (la página principal): <a href="https://github.com/gastonescudero83/tecnochips">github.com/gastonescudero83/tecnochips</a></li>
+    <li>Clic en <span class="btn">Add file ▾</span> → <span class="btn">Upload files</span>.</li>
+    <li>En tu PC, abrí la carpeta <code>tienda-online</code> y <b>entrá adentro</b>. Seleccioná <b>todo lo que está dentro</b> (podés usar <span class="k">Ctrl</span> + <span class="k">A</span>) y arrastrá esa selección al recuadro.</li>
+    <li>Escribí una nota (ej: <code>Actualización general</code>) y clic en <span class="btn">Commit changes</span>.</li>
+  </ol>
+
+  <div class="aviso caja">
+    <b>⚠️ Muy importante para no ensuciar el repositorio</b>
+    Arrastrá el <b>contenido</b> de la carpeta (los archivos y subcarpetas que están adentro), <b>NO la carpeta <code>tienda-online</code> entera</b>. Si arrastrás la carpeta completa, GitHub crea una carpeta <code>tienda-online</code> <i>dentro</i> del repositorio (un duplicado), y la tienda no se actualiza bien. La regla es: <b>entrá a la carpeta y arrastrá lo de adentro.</b>
+  </div>
+
+  <h2><span class="n">C</span> Ver los cambios en la tienda</h2>
+  <ol class="pasos">
+    <li>Esperá alrededor de <b>1 minuto</b> a que GitHub publique.</li>
+    <li>Abrí tu tienda y recargá con <span class="k">Ctrl</span> + <span class="k">F5</span> (fuerza a bajar la versión nueva).</li>
+    <li>Si la tenés instalada como app (PWA) en el celular, cerrala del todo y volvé a abrirla.</li>
+  </ol>
+  <p class="mini">Si hiciste un cambio y no lo ves, casi siempre es la memoria (caché) del navegador: volvé a recargar con <span class="k">Ctrl</span> + <span class="k">F5</span>.</p>
+
+  <div class="tip caja">
+    <b>Tranquilidad</b>
+    GitHub guarda el historial de todo. Si algo sale mal, nunca se pierde: siempre se puede volver a una versión anterior. No tengas miedo de probar.
+  </div>
+
+  <footer>
+    Guía de actualización de TECNOCHIP'S · Repositorio: github.com/gastonescudero83/tecnochips · Rama: <code>main</code>
+  </footer>
+
+</div>
+</body>
+</html>

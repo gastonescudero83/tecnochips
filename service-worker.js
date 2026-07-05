@@ -16,7 +16,7 @@
 // Antes faltaban css/etapa5.css, todos los js/etapa5/*, el mapeo asistido y
 // el logo: instalada la PWA, esos archivos no existían offline y además el
 // caché viejo seguía sirviendo código desactualizado.
-const CACHE = 'tienda-pwa-v21'; // v21 = ETAPA 6: Asistente "TECNO" (css/asistente.css + js/asistente/*) al precache
+const CACHE = 'tienda-pwa-v22'; // v22 = Chat mobile flotante translúcido (fuerza refresco de css/asistente.css)
 
 const SHELL = [
   './',
